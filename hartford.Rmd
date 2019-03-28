@@ -12,16 +12,47 @@ library(fs)
 library(tidyverse)
 ```
 
-## R Markdown
 
 ```{r hartford_data, cache=TRUE}
 ct_hartford <- readRDS(url("https://stacks.stanford.edu/file/druid:tr137st9964/tr137st9964_ct_hartford_2019_02_25.rds"))
+
+download.file(url = "https://stacks.stanford.edu/file/druid:tr137st9964/tr137st9964_ct_hartford_shapefiles_2019_02_25.tgz", 
+              dest = "hartford_map.tgz",
+              mode = "wb")
+untar("hartford_map.tgz")
 ```
 
-## Plots
 
 ```{r stops}
 ct_hartford %>% 
+  group_by(subject_race) %>%
   count()
+```
+```{r by_district}
+asian_arrests_by_district <- ct_hartford %>%
+  filter(subject_race == "asian/pacific islander", !is.na(district)) %>%
+  group_by(district) %>%
+  count()
+
+
+```
+
+```{r mapping}
+hartford_map <- read_sf("ct_hartford_shapefiles/Hartford_Neighborhoods.shp") 
+
+hartford_map %>%
+  ggplot() +
+  geom_sf()
+
+file_delete(c("hartford_map.tgz", "ct_hartford_shapefiles/"))
+
+```
+```{r}
+asian_by_district_map <- hartford_map %>%
+  left_join(asian_arrests_by_district, by = c("NAME" = "district")) 
+
+asian_by_district_map %>%
+  ggplot(aes(fill = n)) +
+  geom_sf()
 ```
 
