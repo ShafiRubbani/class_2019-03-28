@@ -6,22 +6,22 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
+library(sf)
+library(fs)
+library(tidyverse)
 ```
 
 ## R Markdown
 
-```{r hartford_data}
-hartford <- readRDS("https://stacks.stanford.edu/file/druid:tr137st9964/tr137st9964_ct_hartford_2019_02_25.rds")
-
+```{r hartford_data, cache=TRUE}
+ct_hartford <- readRDS(url("https://stacks.stanford.edu/file/druid:tr137st9964/tr137st9964_ct_hartford_2019_02_25.rds"))
 ```
 
-## Including Plots
+## Plots
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r stops}
+ct_hartford %>% 
+  count()
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
